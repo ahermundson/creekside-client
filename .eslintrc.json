@@ -1,0 +1,26 @@
+{
+  "globals": {
+    "localStorage": true,
+    "document": true
+  },
+  "extends": ["react-app", "airbnb", "prettier"],
+  "rules": {
+    "comma-dangle": 0,
+    "react/jsx-filename-extension": 0,
+    "object-curly-newline": 0,
+    "arrow-parens": 0,
+    "implicit-arrow-linebreak": 0,
+    "jsx-a11y/href-no-hash": 0,
+    "react/jsx-one-expression-per-line": 0,
+    "no-underscore-dangle": 0,
+    "react/sort-comp": 0,
+    "no-shadow": 0,
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        "components": ["Link"],
+        "specialLink": ["to"]
+      }
+    ]
+  }
+}

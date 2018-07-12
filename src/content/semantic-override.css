@@ -1,0 +1,3 @@
+.ui.inverted.pointing.menu .active.item:after {
+  background-color: #630012 !important;
+}
