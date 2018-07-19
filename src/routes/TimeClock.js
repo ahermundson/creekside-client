@@ -32,7 +32,6 @@ class TimeClock extends Component {
       getActiveUserTimeClock
     } = nextProps.getActiveUserTimeClock;
     if (!loading && hasActiveTimeClock === null) {
-      console.log(nextProps);
       return {
         hasActiveTimeClock: getActiveUserTimeClock.hasActiveTimeClock
       };

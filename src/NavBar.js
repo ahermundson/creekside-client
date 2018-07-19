@@ -4,6 +4,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import { Container, Icon, Menu, Sidebar, Responsive } from 'semantic-ui-react';
 import LoginLogout from './components/LoginLogout';
+import { AuthConsumer } from './components/AuthContext';
 
 const NavBarMobile = ({
   children,
@@ -59,11 +60,11 @@ const NavBarDesktop = ({ leftItems, rightItems }) => (
   >
     <Menu.Item>Creekside Lawn and Landscape</Menu.Item>
     {_.map(leftItems, item => <Menu.Item {...item} />)}
-    <LoginLogout
-      render={({ isAuthenticated }) =>
+    <AuthConsumer>
+      {({ logout, isAuthenticated }) =>
         isAuthenticated ? (
           <Menu.Menu style={{ justifyContent: 'flex-end' }} position="right">
-            <Menu.Item content="Logout" />
+            <Menu.Item onClick={logout} content="Logout" />
           </Menu.Menu>
         ) : (
           <Menu.Menu style={{ justifyContent: 'flex-end' }} position="right">
@@ -71,17 +72,7 @@ const NavBarDesktop = ({ leftItems, rightItems }) => (
           </Menu.Menu>
         )
       }
-    />
-    {/* <LoginLogout.LoggedOut>
-      <Menu.Menu position="right">
-        {_.map(rightItems, item => <Menu.Item {...item} />)}
-      </Menu.Menu>
-    </LoginLogout.LoggedOut>
-    <LoginLogout.LoggedIn>
-      <Menu.Menu position="right">
-        <Menu.Item content="Logout" />
-      </Menu.Menu>
-    </LoginLogout.LoggedIn> */}
+    </AuthConsumer>
   </Menu>
 );
 
