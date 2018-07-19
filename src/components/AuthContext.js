@@ -4,18 +4,33 @@ import React from 'react';
 import createHistory from 'history/createBrowserHistory';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import isAuthenticated from '../Utils/IsAuthenticated';
 
 const AuthContext = React.createContext();
 const history = createHistory({ forceRefresh: true });
 
 class AuthContextComponent extends React.Component {
+  componentDidMount() {
+    const authResponse = isAuthenticated();
+    if (authResponse) {
+      const { user } =
+        authResponse.decodedToken || authResponse.decodedRefreshToken;
+      this.setState(
+        {
+          isAuthenticated: true,
+          user
+        },
+        () => history.location.pathname === '/' && history.push('/timeclock')
+      );
+    }
+  }
+
   isAuthenticated = () => {
     const { isAuthenticated } = this.state;
     return isAuthenticated;
   };
 
   login = async () => {
-    console.log(this.props);
     const { email, password } = this.state;
     const { mutate } = this.props;
     const response = await mutate({
@@ -40,7 +55,6 @@ class AuthContextComponent extends React.Component {
       if (emailError) {
         errorList.push(emailError);
       }
-      console.log(errorList);
       this.setState({
         errorList
       });
@@ -54,11 +68,25 @@ class AuthContextComponent extends React.Component {
     });
   };
 
+  logout = () => {
+    localStorage.clear();
+    this.setState(
+      {
+        user: {},
+        isAuthenticated: false
+      },
+      () => {
+        history.push('/');
+      }
+    );
+  };
+
   state = {
-    isAuthenticated: true,
+    isAuthenticated: false,
     user: {},
     errorList: null,
     login: this.login,
+    logout: this.logout,
     email: '',
     password: '',
     onChange: this.onChange

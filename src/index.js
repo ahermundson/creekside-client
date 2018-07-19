@@ -8,7 +8,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import 'semantic-ui-css/semantic.min.css';
 import './content/semantic-override.css';
 import Routes from './routes';
-import NavBar from './NavBar';
+// import NavBar from './NavBar';
 import registerServiceWorker from './registerServiceWorker';
 
 const httpLink = createHttpLink({ uri: 'http://localhost:3001/graphql' });
@@ -52,24 +52,22 @@ const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
-const leftItems = [
-  {
-    as: 'a',
-    content: 'Home',
-    key: 'home',
-    active: true
-  }
-];
-const rightItems = [
-  { as: 'a', content: 'Login', key: 'login' },
-  { as: 'a', content: 'Register', key: 'register' }
-];
+// const leftItems = [
+//   {
+//     as: 'a',
+//     content: 'Home',
+//     key: 'home',
+//     active: true
+//   }
+// ];
+// const rightItems = [
+//   { as: 'a', content: 'Login', key: 'login' },
+//   { as: 'a', content: 'Register', key: 'register' }
+// ];
 
 const App = () => (
   <ApolloProvider client={client}>
-    <NavBar leftItems={leftItems} rightItems={rightItems}>
-      <Routes />
-    </NavBar>
+    <Routes />
   </ApolloProvider>
 );
 
