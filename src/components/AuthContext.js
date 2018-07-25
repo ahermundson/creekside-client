@@ -89,7 +89,8 @@ class AuthContextComponent extends React.Component {
     logout: this.logout,
     email: '',
     password: '',
-    onChange: this.onChange
+    onChange: this.onChange,
+    isAdmin: false
   };
 
   render() {

@@ -5,6 +5,7 @@ import { Grid, Form, Segment, Button, Select } from 'semantic-ui-react';
 import { graphql, compose } from 'react-apollo';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
+import * as moment from 'moment';
 
 class TimeClock extends Component {
   static propTypes = {
@@ -12,13 +13,17 @@ class TimeClock extends Component {
     getLocations: PropTypes.shape({
       location: PropTypes.bool
     }),
-    stopTimeClock: PropTypes.func
+    stopTimeClock: PropTypes.func,
+    getLastFiveTimeClocks: PropTypes.shape({
+      loading: PropTypes.bool
+    })
   };
 
   static defaultProps = {
     startTimeClock: null,
     getLocations: null,
-    stopTimeClock: null
+    stopTimeClock: null,
+    getLastFiveTimeClocks: null
   };
 
   state = {
@@ -65,11 +70,35 @@ class TimeClock extends Component {
     });
   };
 
+  static formatTimeClockTime(hours, minutes, punchedIn) {
+    if (!hours) {
+      return `${moment(punchedIn).format('MMM Do')} - ${minutes} minutes`;
+    }
+    return `${moment(punchedIn).format(
+      'MMM Do'
+    )} - ${hours} hours and ${minutes} minutes`;
+  }
+
   render() {
     const { hasActiveTimeClock } = this.state;
+    let lastFiveTimeDiff;
     const {
-      getLocations: { loading, getLocations }
+      getLocations: { loading, getLocations },
+      getLastFiveTimeClocks: { loading: lastFiveLoading, getLastFiveTimeClocks }
     } = this.props;
+    if (getLastFiveTimeClocks) {
+      lastFiveTimeDiff = getLastFiveTimeClocks.map(
+        ({ _id, punched_in: punchedIn, punched_out: punchedOut }) => {
+          const ms = moment(punchedOut).diff(moment(punchedIn));
+          const d = moment.duration(ms);
+          return (
+            <li key={_id}>
+              {TimeClock.formatTimeClockTime(d.hours(), d.minutes(), punchedIn)}
+            </li>
+          );
+        }
+      );
+    }
     return (
       <div className="login-form" style={{ height: '100%' }}>
         <Grid
@@ -113,6 +142,16 @@ class TimeClock extends Component {
                   >
                     Punch In
                   </Button>
+                )}
+                {lastFiveLoading ? (
+                  <span>Loading...</span>
+                ) : (
+                  <div style={{ marginTop: '10px' }}>
+                    <h4 style={{ textAlign: 'center' }}>
+                      Last Five TimeClocks
+                    </h4>
+                    <ul style={{ listStyle: 'none' }}>{lastFiveTimeDiff}</ul>
+                  </div>
                 )}
               </Segment>
             </Form>
@@ -165,6 +204,19 @@ export default compose(
     `,
     {
       name: 'getActiveUserTimeClock'
+    }
+  ),
+  graphql(
+    gql`
+      {
+        getLastFiveTimeClocks {
+          _id
+          punched_in
+        }
+      }
+    `,
+    {
+      name: 'getLastFiveTimeClocks'
     }
   ),
   graphql(START_TIMECLOCK, { name: 'startTimeClock' }),
